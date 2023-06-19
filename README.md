@@ -1,1 +1,1 @@
-# sample-app-FEclient
+# sample-app-client
