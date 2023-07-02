@@ -13,13 +13,14 @@ import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 
 import AuthService from "../services/auth.service";
-import userService from '../services/user.service';
 import { useState } from 'react';
 
-export default function SignIn() {
+export default function ForgotPassword() {
   const [errorAlert, setErrorAlert] = useState<string | null>(null);
+  const [successAlert, setSuccessAlert] = useState<string | null>(null);
 
   const handleCloseSnackbar = () => {
+    setSuccessAlert(null);
     setErrorAlert(null);
   };
 
@@ -27,24 +28,14 @@ export default function SignIn() {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const email = data.get('email');
-    const password = data.get('password');
 
-    AuthService.login(email as string, password as string).then(
-      () => {
-        userService.saveCurrentUser().then(
-          () => {
-            window.location.reload();
-          }
-        )
-      }).catch((error) => {
-        if (error.response && error.response.status === 400 && error.response.data.detail === "LOGIN_BAD_CREDENTIALS") {
-          setErrorAlert("Invalid Username or Password");
-        }
-        else {
-          setErrorAlert("An error occurred while trying to login");
-        }
-    });
-  };
+    AuthService.forgotPassword(email as string).then(
+        () => {
+            setSuccessAlert("If the email exists in our database, you will receive an email with instructions to reset your password");
+        }).catch((error) => {
+            setErrorAlert("Unknown error, check browser console for more details");
+        })
+    };
 
   return (
     <div>
@@ -62,7 +53,7 @@ export default function SignIn() {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign in
+            Forgot Password
           </Typography>
           <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
             <TextField
@@ -75,28 +66,18 @@ export default function SignIn() {
               autoComplete="email"
               autoFocus
             />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-            />
             <Button
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign In
+              Confirm
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item xs>
-                <Link href="/forgot-password" variant="body2">
-                  Forgot password?
+                <Link href="/login" variant="body2">
+                  Already have an account? Sign in
                 </Link>
               </Grid>
               <Grid item>
@@ -108,18 +89,30 @@ export default function SignIn() {
           </Box>
         </Box>
       </Container>
-      {errorAlert !== null && (
-        <Snackbar 
-            open={errorAlert !== null} 
-            autoHideDuration={6000} 
-            onClose={handleCloseSnackbar}
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-            >
-            <Alert onClose={handleCloseSnackbar} severity="error" variant="filled">
-                {errorAlert}
-            </Alert>
-        </Snackbar>
-      )}
+        {errorAlert !== null && (
+            <Snackbar 
+                open={errorAlert !== null} 
+                autoHideDuration={6000} 
+                onClose={handleCloseSnackbar}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                >
+                <Alert onClose={handleCloseSnackbar} severity="error" variant="filled">
+                    {errorAlert}
+                </Alert>
+            </Snackbar>
+        )}
+        {successAlert !== null && (
+            <Snackbar 
+                open={successAlert !== null} 
+                autoHideDuration={6000} 
+                onClose={handleCloseSnackbar}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                >
+                <Alert onClose={handleCloseSnackbar} severity="success" variant="filled">
+                    {successAlert}
+                </Alert>
+            </Snackbar>
+        )}
     </div>
   );
 }

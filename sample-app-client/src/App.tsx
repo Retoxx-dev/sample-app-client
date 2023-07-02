@@ -9,6 +9,8 @@ import Me from "./components/me.component";
 import Register from "./components/register.component";
 import Navbar from "./components/nav.component";
 import Admin from "./components/admin.component";
+import ForgotPassword from "./components/forgot-password.component";
+import ResetPassword from "./components/reset-password.component";
 
 
 function App() {
@@ -44,6 +46,14 @@ function App() {
             <Route
                 path="*"
                 element={<h1>404 Mordo</h1>}
+            />
+            <Route
+                path="/forgot-password"
+                element={ <ForgotPassword /> }
+            />
+            <Route
+                path="/reset-password"
+                element={ <ResetPassword /> }
             />
           </Routes>
         </div>

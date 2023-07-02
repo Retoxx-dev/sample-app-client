@@ -9,22 +9,22 @@ class AuthService {
     params.append('username', username);
     params.append('password', password);
     return axios.post(API_URL + 'login', params, {
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        }
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
     }).then((response) => {
-        if (response.data.access_token) {
-            localStorage.setItem('user', JSON.stringify(response.data));
-        }
-        return response.data;
+      if (response.data.access_token) {
+        localStorage.setItem('user', JSON.stringify(response.data));
+      }
+      return response.data;
     });
   }
-
+  
   logout() {
     localStorage.removeItem('user');
     localStorage.removeItem('currentUser');
   }
-
+  
   register(email: string, password: string, first_name: string, last_name: string) {
     return axios.post(API_URL + 'register', {
       email,
@@ -38,23 +38,37 @@ class AuthService {
       }
     });
   }
-
+  
   updateCurrentUser(updatedUser: any) {
     return axios.patch(API_URL + 'users/me', updatedUser, { headers: authHeader() })
-      .then((response) => {
-        if (response.data) {
-          localStorage.setItem('currentUser', JSON.stringify(response.data));
-        }
-        return response.data;
-      });
+    .then((response) => {
+      if (response.data) {
+        localStorage.setItem('currentUser', JSON.stringify(response.data));
+      }
+      return response.data;
+    });
   }
-
+  
   getCurrentUser() {
     return JSON.parse(localStorage.getItem('user')!);
   }
-
+  
   getCurrentLocalUser() {
     return JSON.parse(localStorage.getItem('currentUser')!);
+  }
+  
+  forgotPassword(email: string) {
+    return axios.post(API_URL + 'forgot-password', { email })
+    .then((response) => {
+      return response.data;
+    });
+  }
+
+  resetPassword(token: string, password: string) {
+    return axios.post(API_URL + 'reset-password', { token, password })
+    .then((response) => {
+      return response.data;
+    });
   }
 }
 
