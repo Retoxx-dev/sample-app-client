@@ -1,5 +1,5 @@
-import React from "react";
-import { BrowserRouter as Router, Route, Navigate, Routes} from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { BrowserRouter as Router, Route, Navigate, Routes } from "react-router-dom";
 import './App.css';
 
 import AuthService from "./services/auth.service";
@@ -14,51 +14,68 @@ import ResetPassword from "./components/reset-password.component";
 
 
 function App() {
-  const user = AuthService.getCurrentLocalUser();
-  const isSuperUser = user ? user.is_superuser : false;
-    return (
-      <Router>
-        <div>
-          {
-            user ? (
-              <Navbar isSuperUser={isSuperUser}/>
-            ) : (null)
-          }
-          <Routes>
-            <Route path="/login" 
-              element={user ? <Navigate to="/me" /> : <Login/>}
-            />
-            <Route path="/register" 
-              element={<Register/>}
-            />
-            <Route
-                path="/"
-                element={user ? <Navigate to="/me" /> : <Navigate to="/login" />}
-            />
-            <Route
-                path="/me"
-                element={user ? <Me /> : <Navigate to="/login" />}
-            />
-            <Route
-                path="/admin"
-                element={user && isSuperUser ? <Admin /> : <Navigate to="/login" />}
-            />
-            <Route
-                path="*"
-                element={<h1>404 Mordo</h1>}
-            />
-            <Route
-                path="/forgot-password"
-                element={ <ForgotPassword /> }
-            />
-            <Route
-                path="/reset-password"
-                element={ <ResetPassword /> }
-            />
-          </Routes>
-        </div>
-      </Router>
-    );
-}
+  const [isAuthenticated] = useState<boolean>(
+    () => {
+      const isAuthenticated = AuthService.isAuthenticated();
+      return isAuthenticated;
+    }
+  );
 
+  const [isSuperUser] = useState<boolean>(
+    () => {
+      const user = AuthService.getCurrentLocalUser();
+      return user?.is_superuser || false;
+    }
+  );
+
+    
+
+  console.log("isAuthenticated: ", isAuthenticated);
+  console.log("isSuperUser: ", isSuperUser);
+  
+  return (
+    <Router>
+    <div>
+    {
+      isAuthenticated  ? (
+        <Navbar isSuperUser={isSuperUser}/>
+        ) : (null)
+    }
+      <Routes>
+      <Route path="/login" 
+      element={isAuthenticated  ? <Navigate to="/me" /> : <Login/>}
+      />
+      <Route path="/register" 
+      element={<Register/>}
+      />
+      <Route
+      path="/"
+      element={isAuthenticated  ? <Navigate to="/me" /> : <Navigate to="/login" />}
+      />
+      <Route
+      path="/me"
+      element={isAuthenticated  ? <Me /> : <Navigate to="/login" />}
+      />
+      <Route
+      path="/admin"
+      element={isAuthenticated && isSuperUser ? <Admin /> : <Navigate to="/login" />}
+      />
+      <Route
+      path="*"
+      element={<h1>404 Mordo</h1>}
+      />
+      <Route
+      path="/forgot-password"
+      element={ <ForgotPassword /> }
+      />
+      <Route
+      path="/reset-password"
+      element={ <ResetPassword /> }
+      />
+      </Routes>
+      </div>
+      </Router>
+  );
+}
+    
 export default App;

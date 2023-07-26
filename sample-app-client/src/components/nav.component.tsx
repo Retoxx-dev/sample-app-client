@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppBar, Toolbar, IconButton, Button, Box, Typography } from '@mui/material';
+import { AppBar, Toolbar, IconButton, Button, Box } from '@mui/material';
 import { Logout, Person, SupervisorAccount } from '@mui/icons-material';
 
 import AuthService from "../services/auth.service";

@@ -107,8 +107,13 @@ const AdminComponent = () => {
       .then(response => {
         setUsers(response);
       })
-      .catch(error => {
-        console.error('Error fetching users:', error);
+      .catch((error) => {
+        if (error.response && error.response.status === 401) {
+            setErrorAlert("You're not authorized to view this page");
+        }
+        else {
+            setErrorAlert("Unknown error, check browser console for more details");
+        }
       });
   }, []);
 
