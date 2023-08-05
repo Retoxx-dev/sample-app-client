@@ -1,8 +1,7 @@
 import axios from 'axios';
 import authHeader from './auth-header';
 
-//const API_URL = process.env.REACT_APP_API_URL; todo: investigate why this doesn't work on kubernetes
-const API_URL = 'https://api.dziedzic.me/v1/'
+const API_URL = process.env.REACT_APP_API_URL;
 
 class AuthService {
   login(username: string, password: string) {

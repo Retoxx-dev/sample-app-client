@@ -4,6 +4,8 @@ WORKDIR /app
 COPY --chown=node:node ./sample-app-client/package.json ./sample-app-client/package-lock.json ./
 RUN npm ci
 COPY --chown=node:node ./sample-app-client ./
+ARG API_BASE_URL
+ENV REACT_APP_API_URL=${API_BASE_URL}
 RUN npm run build
 
 
