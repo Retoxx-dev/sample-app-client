@@ -6,6 +6,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        - API_BASE_URL=http://localhost:80/v1/
     environment:
       - NODE_ENV=development
       - CHOKIDAR_USEPOLLING=true

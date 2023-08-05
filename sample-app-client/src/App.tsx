@@ -28,11 +28,6 @@ function App() {
     }
   );
 
-    
-
-  console.log("isAuthenticated: ", isAuthenticated);
-  console.log("isSuperUser: ", isSuperUser);
-  
   return (
     <Router>
     <div>
