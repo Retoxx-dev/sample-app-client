@@ -57,10 +57,19 @@ export default function Register() {
         setSuccessAlert("Registration successful, you will be redirected to the login page in: ");
       }).catch((error) => {
         if (error.response && error.response.status === 400 && error.response.data.detail === "REGISTER_USER_ALREADY_EXISTS") {
-            setErrorAlert("User already exists");
+          setErrorAlert("User already exists");
+        }
+        if (error.response && error.response.status === 422 && error.response.data.detail[0].loc[1] === "email") {
+          setErrorAlert(error.response.data.detail[0].msg);
+        }
+        if (error.response && error.response.status === 400 && error.response.data.detail.code === "REGISTER_INVALID_PASSWORD") {
+          setErrorAlert(error.response.data.detail.reason);
+        }
+        if (error.response && error.response.status === 400 && error.response.data.detail.code === "REGISTER_INVALID_NAME") {
+          setErrorAlert(error.response.data.detail.reason);
         }
         else {
-            setErrorAlert("Unknown error, check browser console for more details");
+          setErrorAlert("Unknown error, check browser console for more details");
         }
     });
   };
@@ -87,7 +96,6 @@ export default function Register() {
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
             <TextField
-              autoComplete="given-name"
               name="first_name"
               required
               fullWidth
@@ -103,7 +111,6 @@ export default function Register() {
               id="lastName"
               label="Last Name"
               name="last_name"
-              autoComplete="family-name"
             />
           </Grid>
           <Grid item xs={12}>
@@ -113,7 +120,6 @@ export default function Register() {
               id="email"
               label="Email Address"
               name="email"
-              autoComplete="email"
             />
           </Grid>
           <Grid item xs={12}>
@@ -124,7 +130,6 @@ export default function Register() {
               label="Password"
               type="password"
               id="password"
-              autoComplete="new-password"
             />
           </Grid>
         </Grid>
