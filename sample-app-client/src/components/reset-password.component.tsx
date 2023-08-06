@@ -12,7 +12,7 @@ import Alert from '@mui/material/Alert';
 
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import authService from '../services/auth.service';
+import AuthService from '../services/auth.service';
 
 export default function ResetPassword() {
   const [errorAlert, setErrorAlert] = useState<string | null>(null);
@@ -43,37 +43,30 @@ export default function ResetPassword() {
     }
   }, [successAlert, countdown]);
 
-  const passwordsMatch = (password: string, confirmpassword: string) => {
-    console.log(password);
-    console.log(confirmpassword);
-    if (password !== confirmpassword) {
-        return false;
-    }
-    return true;
-    }
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const password = data.get('password');
-    const confirmpassword = data.get('confirmpassword');
     const token = searchParams.get('token');
 
-    if (passwordsMatch(password as string, confirmpassword as string)) {
-            authService.resetPassword(token as string, password as string).then(
-                () => {
-                    setSuccessAlert("Password reset successfully, you will be redirected to the login page in: ");
-                }
-            ).catch((error) => {
-                if (error.response && error.response.status === 400 && error.response.data.detail === "RESET_PASSWORD_BAD_TOKEN") {
-                    setErrorAlert("Invalid or Expired Token");
-                }
-                else {
-                    setErrorAlert("An error occurred while trying to reset password");
-                }
+
+    AuthService.resetPassword(token as string, password as string).then(
+        () => {
+            setSuccessAlert("Password reset successfully, you will be redirected to the login page in: ");
+        }
+        ).catch((error) => {
+            if (error.response && error.response.status === 400 && error.response.data.detail === "RESET_PASSWORD_BAD_TOKEN") {
+                setErrorAlert("Invalid or Expired Token");
             }
-        )
-    };
+            else if (error.response && error.response.status === 400 && error.response.data.detail.code === "RESET_PASSWORD_INVALID_PASSWORD") {
+              setErrorAlert(error.response.data.detail.reason);
+            }
+            else {
+                setErrorAlert("An error occurred while trying to reset password");
+            }
+        }
+    )
   };
 
   return (
@@ -105,16 +98,6 @@ export default function ResetPassword() {
               autoComplete="password"
               type="password"
               autoFocus
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="confirmpassword"
-              label="Confirm Password"
-              name="confirmpassword"
-              autoComplete="confirmpassword"
-              type="password"
             />
             <Button
               type="submit"

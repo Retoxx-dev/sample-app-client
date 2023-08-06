@@ -59,13 +59,13 @@ export default function Register() {
         if (error.response && error.response.status === 400 && error.response.data.detail === "REGISTER_USER_ALREADY_EXISTS") {
           setErrorAlert("User already exists");
         }
-        if (error.response && error.response.status === 422 && error.response.data.detail[0].loc[1] === "email") {
+        else if (error.response && error.response.status === 422 && error.response.data.detail[0].loc[1] === "email") {
           setErrorAlert(error.response.data.detail[0].msg);
         }
-        if (error.response && error.response.status === 400 && error.response.data.detail.code === "REGISTER_INVALID_PASSWORD") {
+        else if (error.response && error.response.status === 400 && error.response.data.detail.code === "REGISTER_INVALID_PASSWORD") {
           setErrorAlert(error.response.data.detail.reason);
         }
-        if (error.response && error.response.status === 400 && error.response.data.detail.code === "REGISTER_INVALID_NAME") {
+        else if (error.response && error.response.status === 400 && error.response.data.detail.code === "REGISTER_INVALID_NAME") {
           setErrorAlert(error.response.data.detail.reason);
         }
         else {
