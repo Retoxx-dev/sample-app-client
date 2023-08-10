@@ -10,13 +10,13 @@ env:
 jobs:
   BuildAndPush:
     runs-on: ubuntu-latest
-    environment: production
+    environment: development
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
       - name: Build Client Docker image
-        run: docker build -t $CONTAINER_REGISTRY_URI/client:prod -f ./Dockerfile --build-arg API_BASE_URL=${{ vars.API_BASE_URL }} .
+        run: docker build -t $CONTAINER_REGISTRY_URI/client:dev -f ./Dockerfile --build-arg API_BASE_URL=${{ vars.API_BASE_URL }} .
 
       - name: Login to Azure
         uses: azure/login@v1
@@ -27,4 +27,4 @@ jobs:
         run: az acr login --name $CONTAINER_REGISTRY_URI
 
       - name: Push Client Docker image
-        run: docker push $CONTAINER_REGISTRY_URI/client:prod
+        run: docker push $CONTAINER_REGISTRY_URI/client:dev
