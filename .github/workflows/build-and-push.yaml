@@ -15,13 +15,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Prepare short git commit SHA
-        id: sha_calculation
-        run: |
-          echo "$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_OUTPUT
+      - name: Add SHORT_SHA env property with commit short sha
+        run: echo "SHORT_SHA=`git rev-parse --short ${{ github.sha }} | cut -c1-8`" >> $GITHUB_ENV
 
       - name: Build Client Docker image
-        run: docker build -t $CONTAINER_REGISTRY_URI/client:${{ steps.sha_calculation.outputs.short_sha }} -f ./Dockerfile --build-arg API_BASE_URL=${{ vars.API_BASE_URL }} .
+        run: docker build -t $CONTAINER_REGISTRY_URI/client:${SHORT_SHA} -f ./Dockerfile --build-arg API_BASE_URL=${{ vars.API_BASE_URL }} .
 
       - name: Login to Azure
         uses: azure/login@v1
@@ -32,4 +30,4 @@ jobs:
         run: az acr login --name $CONTAINER_REGISTRY_URI
 
       - name: Push Client Docker image
-        run: docker push $CONTAINER_REGISTRY_URI/client:${{ steps.sha_calculation.outputs.short_sha }}
+        run: docker push $CONTAINER_REGISTRY_URI/client:${SHORT_SHA}
