@@ -1,18 +1,11 @@
-import React from 'react';
-import { AppBar, Toolbar, IconButton, Button, Box } from '@mui/material';
-import { Logout, Person, SupervisorAccount } from '@mui/icons-material';
-
-import AuthService from "../services/auth.service";
+import { AppBar, Toolbar, IconButton, Box } from '@mui/material';
+import { Person, SupervisorAccount } from '@mui/icons-material';
 
 import { useNavigate } from 'react-router-dom';
+import AccountMenu from '../pages/AccountProfile/account-menu';
 
 function Navbar({ isSuperUser }: any) {
     const navigate = useNavigate();
-
-    const handleLogout = () => {
-      AuthService.logout();
-      window.location.reload();
-    };
 
     const handleAdminButtonClick = () => {
       navigate("/admin");
@@ -20,25 +13,21 @@ function Navbar({ isSuperUser }: any) {
 
     const handleMeButtonClick = () => {
         navigate("/me");
-      };
+    };
 
     return (
-        <AppBar position="static">
+      <AppBar position="static">
       <Toolbar sx={{ justifyContent: 'space-between' }}>
-        <Box>
-          <IconButton color="inherit" onClick={handleMeButtonClick}>
-            <Person />
-          </IconButton>
-        </Box>
-        <Box>
+        <IconButton color="inherit" onClick={handleMeButtonClick}>
+          <Person />
+        </IconButton>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
           {isSuperUser && (
-                <IconButton color="inherit" onClick={handleAdminButtonClick}>
-                    <SupervisorAccount />
-                </IconButton>
+            <IconButton color="inherit" onClick={handleAdminButtonClick}>
+              <SupervisorAccount />
+            </IconButton>
           )}
-          <Button color="inherit" startIcon={<Logout />} onClick={handleLogout}>
-            Logout
-          </Button>
+          <AccountMenu />
         </Box>
       </Toolbar>
     </AppBar>

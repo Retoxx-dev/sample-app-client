@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import UserService from '../services/user.service';
+import UserService from '../../services/user.service';
 
-import { User } from '../types/user.type';
+import { User } from '../../types/user.type';
 
 import { Dialog, DialogContent, TextField, DialogActions, Button, Box, Typography } from '@mui/material';
 import { DataGrid, GridColDef, GridValueGetterParams, GridCellParams } from '@mui/x-data-grid'

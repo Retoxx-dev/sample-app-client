@@ -9,7 +9,6 @@ class UserService {
       .then((response) => {
         if (response.data) {
           localStorage.setItem('currentUser', JSON.stringify(response.data));
-          console.log(response.data);
         }
         return response.data;
       });
@@ -34,6 +33,17 @@ class UserService {
       .then((response) => {
         return response.data;
       });
+  }
+
+  getUserInitials() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    if (currentUser) {
+      const first_name = currentUser.first_name || '';
+      const last_name = currentUser.last_name || '';
+      const initials = first_name.charAt(0) + last_name.charAt(0);
+      return initials.toUpperCase();
+    }
+    return '';
   }
 }
 

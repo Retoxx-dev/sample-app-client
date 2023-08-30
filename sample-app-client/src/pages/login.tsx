@@ -14,14 +14,28 @@ import Alert from '@mui/material/Alert';
 
 import AuthService from "../services/auth.service";
 import userService from '../services/user.service';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-export default function SignIn() {
+import { useNavigate } from "react-router-dom";
+
+export interface ILoginProps {
+  setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export default function SignIn(props:ILoginProps) {
   const [errorAlert, setErrorAlert] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const handleCloseSnackbar = () => {
     setErrorAlert(null);
   };
+
+  useEffect(() => {
+    const authenticated = AuthService.isAuthenticated();
+    if (authenticated) {
+      navigate("/");
+    }
+  }, [navigate]);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -33,7 +47,9 @@ export default function SignIn() {
       () => {
         userService.saveCurrentUser().then(
           () => {
-            window.location.reload();
+            console.log("User saved successfully");
+            props.setIsAuthenticated(true);
+            window.location.href = "/";
           }
         )
       }).catch((error) => {
