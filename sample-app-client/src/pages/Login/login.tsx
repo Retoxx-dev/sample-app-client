@@ -12,8 +12,9 @@ import Link from '@mui/material/Link';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 
-import AuthService from "../services/auth.service";
-import userService from '../services/user.service';
+import AuthService from "../../services/auth.service";
+import userService from '../../services/user.service';
+import MfaService from '../../services/mfa.service';
 import { useEffect, useState } from 'react';
 
 import { useNavigate } from "react-router-dom";
@@ -24,6 +25,9 @@ export interface ILoginProps {
 
 export default function SignIn(props:ILoginProps) {
   const [errorAlert, setErrorAlert] = useState<string | null>(null);
+
+  const [mfaStatus, setMfaStatus] = useState<boolean | null>(false);
+
   const navigate = useNavigate();
 
   const handleCloseSnackbar = () => {
@@ -42,16 +46,46 @@ export default function SignIn(props:ILoginProps) {
     const data = new FormData(event.currentTarget);
     const email = data.get('email');
     const password = data.get('password');
+    // const otpCode = data.get('mfa');
 
     AuthService.login(email as string, password as string).then(
       () => {
         userService.saveCurrentUser().then(
           () => {
             console.log("User saved successfully");
-            props.setIsAuthenticated(true);
             window.location.href = "/";
+            props.setIsAuthenticated(true);
           }
         )
+        // if (response && response.access_token) {
+        //   MfaService.checkMfaLoginStatus(response.access_token).then((response) => {
+        //     if(response.data.otp_enabled && response.data.otp_verified === true) {
+        //       setMfaStatus(true);
+        //       console.log("MFA is enabled");
+        //     }
+        //     else {
+        //       console.log("MFA is not enabled");
+        //     }
+        //   })
+        // }
+        // if (response && response.access_token && otpCode != null) {
+        //   const otpObject = {
+        //     "token": otpCode as string
+        //   }
+        //   const authToken = response.access_token;
+        //   const tokenObject = {
+        //     "access_token": authToken,
+        //     "token_type" :"bearer"
+        //   }
+        //   MfaService.validateOtp(response.access_token, otpObject).then((response) => {
+        //     if(response.data.otp_valid === true) {
+        //       localStorage.setItem('user', JSON.stringify(tokenObject));
+        //       userService.saveCurrentUser2(authToken)
+        //       props.setIsAuthenticated(true);
+        //       window.location.href = "/";
+        //     }
+        //   })
+        // }
       }).catch((error) => {
         if (error.response && error.response.status === 400 && error.response.data.detail === "LOGIN_BAD_CREDENTIALS") {
           setErrorAlert("Invalid Username or Password");
@@ -101,6 +135,15 @@ export default function SignIn(props:ILoginProps) {
               id="password"
               autoComplete="current-password"
             />
+            {/* {mfaStatus ?(
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="mfa"
+              label="MFA Code"
+              id="mfa"
+            />) : null} */}
             <Button
               type="submit"
               fullWidth

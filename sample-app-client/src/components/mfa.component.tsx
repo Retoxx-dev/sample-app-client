@@ -2,6 +2,8 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 
+import Moment from 'moment';
+
 const MFASettingsBox = ({ isEnabled, enableDate, onEnableClick, onDisableClick }: {isEnabled: any, enableDate: any, onEnableClick: any, onDisableClick: any}) => {
   return (
     <Box sx={{ padding: 3 }}>
@@ -14,7 +16,8 @@ const MFASettingsBox = ({ isEnabled, enableDate, onEnableClick, onDisableClick }
             MFA is currently enabled on your account.
           </Typography>
           <Typography variant="body2" color="textSecondary">
-            Enabled on: {enableDate}
+            {/* Enabled on: {enableDate} */}
+            Enabled on: {Moment(enableDate).format('Do MMMM YYYY, h:mm:ss a')}
           </Typography>
           <Button variant="outlined" onClick={onDisableClick} sx={{ marginTop: 2 }}>
             Disable MFA

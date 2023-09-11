@@ -14,6 +14,23 @@ class UserService {
       });
   }
 
+  // saveCurrentUser2(token: string) {
+  //   const config = {
+  //     headers: {
+  //       'accept': 'application/json',
+  //       'Authorization': 'Bearer ' + token
+  //     },
+  //   };
+
+  //   return axios.get(API_URL + 'users/me', config)
+  //     .then((response) => {
+  //       if (response.data) {
+  //         localStorage.setItem('currentUser', JSON.stringify(response.data));
+  //       }
+  //       return response.data;
+  //     });
+  // }
+
   getAllUsers() {
     return axios.get(API_URL + 'users', { headers: authHeader() })
       .then((response) => {
