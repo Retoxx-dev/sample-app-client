@@ -1,0 +1,23 @@
+---
+name: Client Build and Test Docker Image
+on:
+  pull_request:
+    branches: [ dev, main ]
+
+env:
+  CONTAINER_REGISTRY_URI: acrsampleappneu.azurecr.io
+
+jobs:
+  BuildAndTest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Add SHORT_SHA env property with commit short sha
+        run: echo "SHORT_SHA=`git rev-parse --short ${{ github.sha }} | cut -c1-8`" >> $GITHUB_ENV
+
+      - name: Build Client Docker Image
+        run: docker build -t $CONTAINER_REGISTRY_URI/client:test-${SHORT_SHA} -f ./Dockerfile --build-arg API_BASE_URL=https://example.com .
+
+#The rest of the tests

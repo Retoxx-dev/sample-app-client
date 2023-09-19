@@ -71,36 +71,42 @@ class AuthService {
     });
   }
   
-  // isAuthenticated() {
-  //   const user = JSON.parse(localStorage.getItem('user')!);
-  //   if (user && user.access_token) {
-  //     axios.get(API_URL + 'users/me', { headers: authHeader() })
-  //     .then(() => {
-  //       return true;
-  //     }).catch((error) => {
-  //       if (error.response && error.response.status === 401) {
-  //         this.logout();
-  //         return false;
-  //       }
-  //     });
-  //   }
-  //   return false;
-  // }
-
   isAuthenticated() {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     if (user && user.access_token) {
       try {
-        axios.get(API_URL + 'users/me', { headers: authHeader() });
-        return true; // The token is valid, so return true
-      } catch (error:any) {
+        axios.get(API_URL + 'users/me', { headers: authHeader() })
+          .then(response => {
+            return true;
+          })
+          .catch(error => {
+            if (error.response && error.response.status === 401) {
+              this.logout();
+              console.log('User is not authenticated');
+              return false;
+            }
+            console.error('Error occurred:', error);
+            console.log('User authentication status unknown');
+            return false;
+          });
+        console.log('User is authenticated');
+        return true;
+      } catch (error: any) {
         if (error.response && error.response.status === 401) {
           this.logout();
-          return false;
+          console.log('User is not authenticated');
         }
+        console.log('User is not authenticated');
+        return false;
       }
     }
-    return false; // Either the user is not authenticated or the token is not valid
+    return false;
+  } 
+
+  isSuperUser() {
+    const user = this.getCurrentLocalUser();
+    const superuser = user?.is_superuser || false;
+    return superuser;
   }
   
 }
