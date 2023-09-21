@@ -9,9 +9,13 @@ export default function MainPage() {
   const superuser = authService.isSuperUser();
 
   useEffect(() => {
-    setTimeout(() => {
+    const auth = authService.isAuthenticated();
+    if (!auth) {
+      window.location.href = "/login";
+    }
+    else {
       setIsLoading(false);
-    }, 1000);
+    }
   }, []);
 
   return (
