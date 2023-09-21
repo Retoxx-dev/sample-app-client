@@ -3,6 +3,9 @@ import UserService from '../../services/user.service';
 
 import { User } from '../../types/user.type';
 
+
+
+
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import LoadingScreen from '../../components/loading-screen.component';
@@ -66,14 +69,6 @@ const Admin = () => {
   };
 
   useEffect(() => {
-    const auth = authService.isAuthenticated();
-    if (!auth) {
-      window.location.href = "/login";
-    }
-    else {
-      setIsLoading(false);
-    }
-
     UserService.getAllUsers()
       .then(response => {
         setUsers(response);

@@ -5,7 +5,7 @@ import { Box } from "@mui/material";
 import Grid from '@mui/material/Unstable_Grid2';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
-// import MFASettingsBox from "../../components/mfa.component";
+import MFASettingsBox from "../../components/mfa.component";
 import mfaService from "../../services/mfa.service";
 import QrDialog from "../../components/qr.component";
 import Me from "../../components/me.component";
@@ -44,55 +44,48 @@ export default function Account() {
 
     // Setup loader and check MFA status on page load
     useEffect(() => {
-        // mfaService.checkMfaStatus().then((response) => {
-        //     if(response.otp_enabled && response.otp_verified === true) {
-        //         setMfaStatus(true);
-        //         setMfaEnableDate(response.otp_enabled_at);
-        //         setIsLoading(false);
-        //     }
-        //     else {
-        //         setIsLoading(false);
-        //     }
-        // }).catch((error) => {
-        //     console.log("An error occurred while trying to check MFA status: " + error);
-        //     if(error.response && error.response.status === 401 && error.response.data.detail === "Unauthorized") {
-        //         setErrorAlert("You're not authorized to perform this action");
-        //     }
-        // });
-        const auth = authService.isAuthenticated();
-        if (!auth) {
-            window.location.href = "/login";
-        }
-        else {
-            setIsLoading(false);
-        }
+        mfaService.checkMfaStatus().then((response) => {
+            if(response.otp_enabled && response.otp_verified === true) {
+                setMfaStatus(true);
+                setMfaEnableDate(response.otp_enabled_at);
+                setIsLoading(false);
+            }
+            else {
+                setIsLoading(false);
+            }
+        }).catch((error) => {
+            console.log("An error occurred while trying to check MFA status: " + error);
+            if(error.response && error.response.status === 401 && error.response.data.detail === "Unauthorized") {
+                setErrorAlert("You're not authorized to perform this action");
+            }
+        });
     }, []);
 
     // Handle enabling MFA, open dialog with QR code
-    // const handleEnableClick = () => {
-    //     mfaService.generateMfa().then((response) => {
-    //         console.log(response.otp_base32)
-    //         setbase32(response.otp_base32);
-    //         setQrCode(response.otp_auth_url);
-    //         setModalOpen(true);
-    //     }).catch((error) => {
-    //         console.log("An error occurred while trying to enable MFA: " + error);
-    //         if(error.response && error.response.status === 401 && error.response.data.detail === "Unauthorized") {
-    //             setErrorAlert("You're not authorized to perform this action");
-    //         }
-    //     });
-    // };
+    const handleEnableClick = () => {
+        mfaService.generateMfa().then((response) => {
+            console.log(response.otp_base32)
+            setbase32(response.otp_base32);
+            setQrCode(response.otp_auth_url);
+            setModalOpen(true);
+        }).catch((error) => {
+            console.log("An error occurred while trying to enable MFA: " + error);
+            if(error.response && error.response.status === 401 && error.response.data.detail === "Unauthorized") {
+                setErrorAlert("You're not authorized to perform this action");
+            }
+        });
+    };
 
     // Handle disabling MFA
-    // const handleDisableClick = () => {
-    //     mfaService.disableMfa().then((response) => {
-    //     if (response.otp_enabled === false) {
-    //         setMfaStatus(false);
-    //         setMfaEnableDate(null);
-    //         setSuccessAlert("MFA disabled successfully");
-    //     }  
-    //     });
-    // };
+    const handleDisableClick = () => {
+        mfaService.disableMfa().then((response) => {
+        if (response.otp_enabled === false) {
+            setMfaStatus(false);
+            setMfaEnableDate(null);
+            setSuccessAlert("MFA disabled successfully");
+        }  
+        });
+    };
 
     return (
         <>
@@ -116,12 +109,12 @@ export default function Account() {
                             setErrorAlert={setErrorAlert}
                         />
                     
-                        {/* <MFASettingsBox
+                        <MFASettingsBox
                             isEnabled={mfaStatus}
                             enableDate={mfaEnableDate}
                             onEnableClick={handleEnableClick}
                             onDisableClick={handleDisableClick}
-                        /> */}
+                        />
                     </Grid>
                     <Grid xs={6} md={4}>
                         
