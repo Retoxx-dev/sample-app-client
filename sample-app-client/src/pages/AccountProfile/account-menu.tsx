@@ -7,15 +7,13 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
 
 import AuthService from "../../services/auth.service";
-import UserService from "../../services/user.service";
 
 import { useNavigate } from 'react-router-dom';
 
-export default function AccountMenu() {
+export default function AccountMenu({selectedImage}: {selectedImage: any}) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
@@ -32,7 +30,7 @@ export default function AccountMenu() {
   const handleProfile = () => {
     navigate("/me");
   };
-  const userInitials = UserService.getUserInitials();
+
   return (
     <React.Fragment>
       <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
@@ -45,9 +43,10 @@ export default function AccountMenu() {
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
           >
-            <Avatar sx={{ width: 36, height: 36 }}>
-              {userInitials}
-            </Avatar>
+            <Avatar 
+              sx={{ width: 36, height: 36 }}
+              src={selectedImage || "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"}
+            />
           </IconButton>
         </Tooltip>
       </Box>
