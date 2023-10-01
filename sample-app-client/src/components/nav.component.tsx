@@ -22,7 +22,9 @@ function Navbar({ isSuperUser }: any) {
     useEffect(() => {
         // Load profile image
         userService.getUserProfileImage().then((response) => {
-            setSelectedImage(response.profile_picture_path);
+          if (response.data.profile_picture_path !== "Default") {
+            setSelectedImage(response.data.profile_picture_path);
+          }
         });
       }, []);
 

@@ -74,7 +74,7 @@ class UserService {
   getUserProfileImage() {
     return axios.get(API_URL + 'get_profile_picture', { headers: authHeader() })
       .then((response) => {
-        return response.data;
+        return response;
       });
   }
 }

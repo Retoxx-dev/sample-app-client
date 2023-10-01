@@ -1,8 +1,6 @@
 import { Box, Button, Grid, Typography } from "@mui/material";
 
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { useEffect, useState } from "react";
-import { UploadFile } from "@mui/icons-material";
 
 import userService from "../services/user.service";
 

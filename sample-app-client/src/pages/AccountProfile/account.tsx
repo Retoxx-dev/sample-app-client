@@ -57,7 +57,9 @@ export default function Account() {
         else {
             // Load profile image
             userService.getUserProfileImage().then((response) => {
-                setSelectedImage(response.profile_picture_path);
+                if (response.data.profile_picture_path !== "Default") {
+                    setSelectedImage(response.data.profile_picture_path);
+                }
             }).catch(() => {
                 setErrorAlert("An error occurred while trying to get the current user's profile image");
             }).then(() => {
