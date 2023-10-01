@@ -3,6 +3,8 @@ import { Person, SupervisorAccount } from '@mui/icons-material';
 
 import { useNavigate } from 'react-router-dom';
 import AccountMenu from '../pages/AccountProfile/account-menu';
+import { useEffect, useState } from 'react';
+import userService from '../services/user.service';
 
 function Navbar({ isSuperUser }: any) {
     const navigate = useNavigate();
@@ -12,8 +14,17 @@ function Navbar({ isSuperUser }: any) {
     };
 
     const handleMeButtonClick = () => {
-        navigate("/me");
+        navigate("/");
     };
+
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+    useEffect(() => {
+        // Load profile image
+        userService.getUserProfileImage().then((response) => {
+            setSelectedImage(response.profile_picture_path);
+        });
+      }, []);
 
     return (
       <AppBar position="static">
@@ -27,7 +38,9 @@ function Navbar({ isSuperUser }: any) {
               <SupervisorAccount />
             </IconButton>
           )}
-          <AccountMenu />
+          <AccountMenu 
+            selectedImage={selectedImage}
+          />
         </Box>
       </Toolbar>
     </AppBar>

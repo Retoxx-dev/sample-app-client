@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
 import authService from "../../services/auth.service";
+import userService from "../../services/user.service";
 
-import { Box } from "@mui/material";
+import { Avatar, Box, Skeleton, Typography } from "@mui/material";
 import Grid from '@mui/material/Unstable_Grid2';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 // import MFASettingsBox from "../../components/mfa.component";
 import mfaService from "../../services/mfa.service";
 import QrDialog from "../../components/qr.component";
-import Me from "../../components/me.component";
+import MeProfile from "../../components/me-profile.component";
 import LoadingScreen from "../../components/loading-screen.component";
 import Navbar from "../../components/nav.component";
+import MeImage from "../../components/me-image.component";
 
 export default function Account() {
     const currentUser = authService.getCurrentLocalUser();
@@ -29,6 +31,11 @@ export default function Account() {
     const [base32, setbase32] = useState<string | null>(null);
     const [qrcode, setQrCode] = useState<string | null>(null);
 
+    //Image upload
+    const [imageObject, setImageObject] = useState<string | null>(null);
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const [isPhotoSelected, setIsPhotoSelected] = useState(false);
+
     const [isLoading, setIsLoading] = useState(true);
 
     const superuser = authService.isSuperUser();
@@ -42,57 +49,22 @@ export default function Account() {
         setModalOpen(false);
     };
 
-    // Setup loader and check MFA status on page load
     useEffect(() => {
-        // mfaService.checkMfaStatus().then((response) => {
-        //     if(response.otp_enabled && response.otp_verified === true) {
-        //         setMfaStatus(true);
-        //         setMfaEnableDate(response.otp_enabled_at);
-        //         setIsLoading(false);
-        //     }
-        //     else {
-        //         setIsLoading(false);
-        //     }
-        // }).catch((error) => {
-        //     console.log("An error occurred while trying to check MFA status: " + error);
-        //     if(error.response && error.response.status === 401 && error.response.data.detail === "Unauthorized") {
-        //         setErrorAlert("You're not authorized to perform this action");
-        //     }
-        // });
         const auth = authService.isAuthenticated();
         if (!auth) {
             window.location.href = "/login";
         }
         else {
-            setIsLoading(false);
+            // Load profile image
+            userService.getUserProfileImage().then((response) => {
+                setSelectedImage(response.profile_picture_path);
+            }).catch(() => {
+                setErrorAlert("An error occurred while trying to get the current user's profile image");
+            }).then(() => {
+                setIsLoading(false);
+            });
         }
     }, []);
-
-    // Handle enabling MFA, open dialog with QR code
-    // const handleEnableClick = () => {
-    //     mfaService.generateMfa().then((response) => {
-    //         console.log(response.otp_base32)
-    //         setbase32(response.otp_base32);
-    //         setQrCode(response.otp_auth_url);
-    //         setModalOpen(true);
-    //     }).catch((error) => {
-    //         console.log("An error occurred while trying to enable MFA: " + error);
-    //         if(error.response && error.response.status === 401 && error.response.data.detail === "Unauthorized") {
-    //             setErrorAlert("You're not authorized to perform this action");
-    //         }
-    //     });
-    // };
-
-    // Handle disabling MFA
-    // const handleDisableClick = () => {
-    //     mfaService.disableMfa().then((response) => {
-    //     if (response.otp_enabled === false) {
-    //         setMfaStatus(false);
-    //         setMfaEnableDate(null);
-    //         setSuccessAlert("MFA disabled successfully");
-    //     }  
-    //     });
-    // };
 
     return (
         <>
@@ -104,7 +76,15 @@ export default function Account() {
             <Box sx={{ flexGrow: 1, mx: 'auto', mt: 4, p: 2 }}>
                 <Grid container spacing={2}>
                     <Grid xs={12} md={4}>
-                        <Me
+                        <MeImage
+                            imageObject={imageObject}
+                            setImageObject={setImageObject}
+                            selectedImage={selectedImage}
+                            setSelectedImage={setSelectedImage}
+                            isPhotoSelected={isPhotoSelected}
+                            setIsPhotoSelected={setIsPhotoSelected}
+                        />
+                        <MeProfile
                             currentUser={currentUser}
                             email={email}
                             first_name={first_name}
@@ -115,7 +95,7 @@ export default function Account() {
                             setSuccessAlert={setSuccessAlert}
                             setErrorAlert={setErrorAlert}
                         />
-                    
+
                         {/* <MFASettingsBox
                             isEnabled={mfaStatus}
                             enableDate={mfaEnableDate}
@@ -124,7 +104,9 @@ export default function Account() {
                         /> */}
                     </Grid>
                     <Grid xs={6} md={4}>
-                        
+                        <Typography variant="h5" component="h1" gutterBottom>
+                            Settings
+                        </Typography>
                     </Grid>
                     <Grid xs={6} md={4}>
 

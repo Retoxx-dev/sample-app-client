@@ -52,15 +52,30 @@ class UserService {
       });
   }
 
-  getUserInitials() {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    if (currentUser) {
-      const first_name = currentUser.first_name || '';
-      const last_name = currentUser.last_name || '';
-      const initials = first_name.charAt(0) + last_name.charAt(0);
-      return initials.toUpperCase();
-    }
-    return '';
+  updateUserProfileImage(file: any) {
+    const config = {
+      headers: {
+        ...authHeader(),
+        'Content-Type': 'multipart/form-data',
+        'accept': 'application/json',
+      }
+    };
+    const formData = new FormData();
+    formData.append(
+      'file',
+      file
+    );
+    return axios.post(API_URL + 'change_profile_picture', formData, config)
+      .then((response) => {
+        return response.data;
+      });
+  }
+
+  getUserProfileImage() {
+    return axios.get(API_URL + 'get_profile_picture', { headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      });
   }
 }
 
